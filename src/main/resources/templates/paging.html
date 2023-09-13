@@ -37,7 +37,7 @@
     <span th:if="${page == boardList.number + 1}" th:text="${page}"></span>
 <!-- 현재페이지 번호가 아닌 다른 페이지번호에는 링크를 보여줌 -->
     <span th:unless="${page == boardList.number + 1}">
-        <a th:href="@{/board/paging(page=${page})}" th:text="${page}"></a>
+        <a th:href="@{/board/paging(page=${page},searchKeyword = ${param.searchKeyword})}" th:text="${page}"></a>
     </span>
 </span>
 
@@ -47,6 +47,10 @@
 <!-- 마지막 페이지로 이동 -->
 <a th:href="@{/board/paging(page=${boardList.totalPages})}">Last</a>
 
+<form th:action="@{/board/paging}" method="get">
+    <input type="text" name="searchKeyword">
+    <button type="submit">검색</button>
+</form>
 </body>
 <script>
     const saveReq = () => {

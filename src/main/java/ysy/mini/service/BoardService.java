@@ -76,6 +76,8 @@ public class BoardService {
         return boardDTOList;
     }
 
+
+
     @Transactional //수동적인 쿼리를 수행하는경우 사용
     public void updateHits(Long id) {
         boardRepository.updateHits(id);
@@ -142,6 +144,20 @@ public class BoardService {
         //page 위치에 있는 값은 0부터 시작
         Page<BoardEntity> boardEntities =
                 boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+
+        // 목록: id, writer, title, hits, createdTime
+        Page<BoardDTO> boardDTOS = boardEntities.map(board -> new BoardDTO(board.getId(),board.getBoardWriter(),
+                board.getBoardTitle(),board.getBoardHits(),board.getCreatedTime()));
+        return boardDTOS;
+    }
+
+    public Page<BoardDTO> searchPaging(String searchKeyword, Pageable pageable){
+        int page = pageable.getPageNumber()-1;
+        int pageLimit =3; //한페이지에 보여줄 글 갯수
+        //한페이지당 3개씩 글을 보여주고 정렬 기준은 id 기준으로 내림차순 정렬
+        //page 위치에 있는 값은 0부터 시작
+        Page<BoardEntity> boardEntities =
+                boardRepository.findByBoardTitleContaining(searchKeyword,PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
 
         // 목록: id, writer, title, hits, createdTime
         Page<BoardDTO> boardDTOS = boardEntities.map(board -> new BoardDTO(board.getId(),board.getBoardWriter(),
